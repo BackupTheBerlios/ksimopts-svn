@@ -295,7 +295,7 @@ shelldesktop_DATA = ksimopts.desktop
 # this is where the shell's XML-GUI resource file goes
 shellrcdir = $(kde_datadir)/ksimopts
 shellrc_DATA = ksimoptsui.rc
-subdir = src
+subdir = trunk
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
@@ -404,11 +404,11 @@ all: docs-am  all-am
 .SUFFIXES: .cpp .lo .o .obj
 $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 #>- 	cd $(top_srcdir) && \
-#>- 	  $(AUTOMAKE) --gnu  src/Makefile
+#>- 	  $(AUTOMAKE) --gnu  trunk/Makefile
 #>+ 3
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  src/Makefile
-	cd $(top_srcdir) && perl admin/am_edit src/Makefile.in
+	  $(AUTOMAKE) --gnu  trunk/Makefile
+	cd $(top_srcdir) && perl admin/am_edit trunk/Makefile.in
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
@@ -712,27 +712,27 @@ clean-metasources:
 	-rm -f  ksimopts.moc
 
 #>+ 2
-KDE_DIST=hi16-app-ksimopts.png ksimopts.lsm hi32-app-ksimopts.png ksimopts.desktop ksimoptsui.rc 
+KDE_DIST=hi16-app-ksimopts.png ksimopts.cpp.mine ksimopts.lsm smatrix.cpp.mine hi32-app-ksimopts.png ksimopts.desktop ksimoptsui.rc 
 
 #>+ 2
 docs-am:
 
 #>+ 10
 install-kde-icons:
-	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/16x16/apps
-	$(INSTALL_DATA) $(srcdir)/hi16-app-ksimopts.png $(DESTDIR)$(kde_icondir)/hicolor/16x16/apps/ksimopts.png
 	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/32x32/apps
 	$(INSTALL_DATA) $(srcdir)/hi32-app-ksimopts.png $(DESTDIR)$(kde_icondir)/hicolor/32x32/apps/ksimopts.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/16x16/apps
+	$(INSTALL_DATA) $(srcdir)/hi16-app-ksimopts.png $(DESTDIR)$(kde_icondir)/hicolor/16x16/apps/ksimopts.png
 
 uninstall-kde-icons:
-	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/16x16/apps/ksimopts.png
 	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/32x32/apps/ksimopts.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/16x16/apps/ksimopts.png
 
 #>+ 6
 force-reedit:
 		cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  src/Makefile
-	cd $(top_srcdir) && perl admin/am_edit src/Makefile.in
+	  $(AUTOMAKE) --gnu  trunk/Makefile
+	cd $(top_srcdir) && perl admin/am_edit trunk/Makefile.in
 
 
 #>+ 21

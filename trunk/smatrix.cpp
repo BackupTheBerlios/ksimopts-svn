@@ -37,14 +37,14 @@ SMatrix::print(void) {
   for (int j=0; j<MatrixDimension_; j++) {
    tmp = SMatrix_ + i*MatrixDimension_ + j;
    QString STRtmp;
-//    STRtmp.sprintf("(%.3f,%.3f) ",(*tmp).real(),(*tmp).imag());
-   int X=MatrixDimension_*j+i;
+   STRtmp.sprintf("(%.3f,%.3f) ",(*tmp).real(),(*tmp).imag());
+/*   int X=MatrixDimension_*j+i;
    if ((X==S11_) || (X==S12_) || (X==S21_) || (X==S22_)) {
      STRtmp = "S";
    } else {
      if ((*tmp) != std::complex<double>(0.0,0.0)) { STRtmp = "#"; }
      else { STRtmp = "."; }
-   }
+   }*/
    ReturnValue.append(STRtmp);
   }
   ReturnValue.append("\n");
@@ -76,9 +76,9 @@ SMatrix::setSchematic(NetList &Schematic) {
 bool
 SMatrix::fillMatrix(double Frequency) {
  Pos_=0;
- double W=Frequency*2*M_PI;
+ double W=Frequency*2.0*M_PI;
  int X,Y;
- 
+
  QValueList<OLElement>::Iterator it3;
  for ( it3 = Schematic_.OLList.begin(); it3 != Schematic_.OLList.end(); ++it3 ){
    addOL(true);
@@ -101,11 +101,11 @@ SMatrix::fillMatrix(double Frequency) {
   addZ(std::complex<double>(0.0,W*(*it).value()));
  }
  for ( it = Schematic_.CList.begin(); it != Schematic_.CList.end(); ++it ){
-  addZ(std::complex<double>(0.0,1.0/(W*(*it).value())));
+  addZ(std::complex<double>(0.0,-1.0/(W*(*it).value())));
  }
  QValueList<CCElement>::Iterator it2;
  for ( it2 = Schematic_.VCCSList.begin(); it2 != Schematic_.VCCSList.end(); ++it2 ){
-   addCS(std::complex<double>(2.0*(*it2).value()*exp(std::complex<double>(0.0,-W*(*it2).tau()))), false, false);
+   addCS(std::complex<double>(-2.0*(*it2).value()*exp(std::complex<double>(0.0,-W*(*it2).tau()))), false, false);
   }
  for ( it2 = Schematic_.VCVSList.begin(); it2 != Schematic_.VCVSList.end(); ++it2 ){
    addCS(std::complex<double>((*it2).value()*exp(std::complex<double>(0.0,-W*(*it2).tau()))), true, false);
@@ -194,7 +194,7 @@ SMatrix::addSC(void)
 void
 SMatrix::addCS(std::complex<double> G, bool first, bool second){
   std::complex<double> *Destination;
-  
+
   if (first) { addOL(false); }
   else { addINOL(false); }
   Destination=SMatrix_+MatrixDimension_*Pos_+Pos_+2;
@@ -206,7 +206,7 @@ SMatrix::addCS(std::complex<double> G, bool first, bool second){
   Pos_+=2;
   if (second) { addOL(true); }
   else { addINOL(true); }
-  
+
 }
 
 void
@@ -238,13 +238,13 @@ SMatrix::createFormula(void) {
   std::complex<double> One_(1.0,0.0);
 
   if (FormulaExists_) return Formula.List.count();
-  
+
   fillMatrix(500e6);
 
-#ifdef DEBUG_    
+#ifdef DEBUG_
   std::cout << print();
-#endif  
-  
+#endif
+
   count0=count1=count2=count3=0;
 
   AVector = (bool*) calloc(MatrixDimension_, sizeof(bool));
@@ -253,12 +253,12 @@ SMatrix::createFormula(void) {
    *(AVector+i)=false;
    *(BVector+i)=false;
   }
-  
+
   qHeapSort( ChopUp.List);
-#ifdef DEBUG_  
+#ifdef DEBUG_
   std::cout << ChopUp.print() << std::endl;
-#endif  
-  
+#endif
+
   QValueList<ChopUpElement>::Iterator it;
   for ( it = ChopUp.List.begin(); it != ChopUp.List.end(); it++ ) {
     ChangeA = (*it).a()-1;
@@ -281,49 +281,49 @@ SMatrix::createFormula(void) {
          if (C != Null_) {
           FormA = MatrixDimension_*Row + Column;
           A = *(SMatrix_ + FormA);
-#ifdef DEBUG_          
+#ifdef DEBUG_
           std::cout << "*** Start of ChangeA: "<< ChangeA << " ChangeB: " << ChangeB << "\n";
           std::cout << "  A before: " << A << " <" << FormA << ">\n";
           std::cout << "  B: "<<B<<" <"<<FormB<<">\n";
           std::cout << "  C: "<<C<<" <"<<FormC<<">\n";
-          std::cout << "  D: "<<D<<" <"<<FormD<<">\n";          
-#endif          
+          std::cout << "  D: "<<D<<" <"<<FormD<<">\n";
+#endif
           if ((A==Null_)&&(D==Null_)) {
            Formula.List.push_back(FormulaElement(0, FormA, FormB, FormC, FormD));
            A = B*C;
            count0++;
-#ifdef DEBUG_           
+#ifdef DEBUG_
            std::cout << "  Formula 0: A=B*C\n";
-#endif           
-          } else 
+#endif
+          } else
           if ((A!=Null_)&&(D==Null_)) {
            Formula.List.push_back(FormulaElement(1, FormA, FormB, FormC, FormD));
            A += B*C;
            count1++;
-#ifdef DEBUG_           
+#ifdef DEBUG_
            std::cout << "  Formula 1: A=A+B*C\n";
-#endif       
+#endif
           } else
           if ((A==Null_)&&(D!=Null_)) {
            Formula.List.push_back(FormulaElement(2, FormA, FormB, FormC, FormD));
            A = B*C/(One_-D);
            count2++;
-#ifdef DEBUG_           
+#ifdef DEBUG_
            std::cout << "  Formula 2: A=B*C/(1-D)\n";
-#endif          
+#endif
           } else
           if ((A!=Null_)&&(D!=Null_)) {
            Formula.List.push_back(FormulaElement(3, FormA, FormB, FormC, FormD));
            A += B*C/(One_-D);
            count3++;
-#ifdef DEBUG_           
+#ifdef DEBUG_
            std::cout << "  Formula 3: A=A+B*C/(1-D)\n";
 #endif
           }
           *(SMatrix_+FormA)=A;
-#ifdef DEBUG_          
+#ifdef DEBUG_
           std::cout << "  A after: " << A << "<" << FormA << ">\n";
-#endif          
+#endif
          }
         }
         Column++;
@@ -335,12 +335,12 @@ SMatrix::createFormula(void) {
     *(BVector+ChangeB)=true;
     *(AVector+ChangeA)=true;
   }
-  
+
   FormulaExists_=true;
 
 #ifdef DEBUG_
   std::cout << S11_ << " " << S12_ << " " << S21_ << " " << S22_ << std::endl;
-  std::cout << count0 << " " << count1 << " " << count2 << " " << count3 << " (" << 
+  std::cout << count0 << " " << count1 << " " << count2 << " " << count3 << " (" <<
                count0+count1+count2+count3 << ")" << std::endl;
   std::cout << "S11: (" << s11().real() << "," << s11().imag() << ")\n";
   std::cout << "S12: (" << s12().real() << "," << s12().imag() << ")\n";
@@ -352,10 +352,10 @@ SMatrix::createFormula(void) {
   return Formula.List.count();
 }
 
-bool 
+bool
 SMatrix::calculate(double Frequency){
  fillMatrix(Frequency);
- 
+
  QValueList<FormulaElement>::Iterator it;
  for ( it = Formula.List.begin(); it != Formula.List.end(); it++) {
    switch((*it).formula()) {

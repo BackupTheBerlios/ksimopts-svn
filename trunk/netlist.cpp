@@ -132,7 +132,7 @@ NetList::loadFromFile(QString filename) {
        double  Value = tmp.replace(QRegExp("[^0-9.,]*"),"").toDouble();
        Value *= UnitToDouble(TempFields[5].replace(QRegExp("[0-9]*"),""));
        tmp = TempFields[6];
-       double Tau=50.0e-3;
+       double Tau=750.0e-15;
        if (tmp != "") {
          Tau = tmp.replace(QRegExp("[^0-9.,]*"),"").toDouble();
          Tau *= UnitToDouble(TempFields[6].replace(QRegExp("[0-9]*"),""));

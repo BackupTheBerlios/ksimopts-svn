@@ -40,20 +40,21 @@ ksimopts::ksimopts()
 
     new QLabel( "Only ascii", this, "KSimOpts" );
     SParameterList SOrig, SCalc;
-    SOrig.loadFromFile("/home/cnikiel/Projects/testfile/test6.s");
+    SOrig.loadFromFile("/home/cnikiel/Projects/testfile/hbt_20.s");
     FinalCost finalcost(SOrig);
     NetList Schematic;
-    Schematic.loadFromFile("/home/cnikiel/Projects/testfile/test6.net");
+    Schematic.loadFromFile("/home/cnikiel/Projects/testfile/hbt_20.net");
 
     SMatrix SM(Schematic);
     SM.createFormula();
-    
+
     QValueList<SParameter>::Iterator it;
-    for ( it = SOrig.List.begin(); it != SOrig.List.end(); ++it ){
+    for ( it = SOrig.List.begin(); it == SOrig.List.begin(); it++ ){
      SM.calculate((*it).frequency());
      SCalc.List.push_back(SParameter::SParameter(
            SM.s11(), SM.s12(), SM.s21(), SM.s22(), (*it).frequency()));
     }
+    std::cout << SM.print() << std::endl;
     std::cout << finalcost.calculate(SCalc) << "\n";
 }
 
