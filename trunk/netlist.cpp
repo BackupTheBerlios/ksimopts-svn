@@ -132,7 +132,7 @@ NetList::loadFromFile(QString filename) {
        double  Value = tmp.replace(QRegExp("[^0-9.,]*"),"").toDouble();
        Value *= UnitToDouble(TempFields[5].replace(QRegExp("[0-9]*"),""));
        tmp = TempFields[6];
-       double Tau=0.0;
+       double Tau=50.0e-3;
        if (tmp != "") {
          Tau = tmp.replace(QRegExp("[^0-9.,]*"),"").toDouble();
          Tau *= UnitToDouble(TempFields[6].replace(QRegExp("[0-9]*"),""));
@@ -305,6 +305,15 @@ void
 NetList::createNodeList(void) {
   int counter=1;
 
+ QValueList<OLElement>::Iterator it3;
+ for ( it3 = OLList.begin(); it3 != OLList.end(); ++it3 ){
+  Nodes.add((*it3).startNode(),counter++);
+  Nodes.add((*it3).endNode(),counter++);
+ }
+ QValueList<SCElement>::Iterator it4;
+ for ( it4 = SCList.begin(); it4 != SCList.end(); ++it4 ){
+  Nodes.add((*it4).node(),counter++);
+ }
  QValueList<RCLElement>::Iterator it;
  for ( it = RList.begin(); it != RList.end(); ++it ){
   Nodes.add((*it).startNode(),counter++);
@@ -317,15 +326,6 @@ NetList::createNodeList(void) {
  for ( it = CList.begin(); it != CList.end(); ++it ){
   Nodes.add((*it).startNode(),counter++);
   Nodes.add((*it).endNode(),counter++);
- }
- QValueList<OLElement>::Iterator it3;
- for ( it3 = OLList.begin(); it3 != OLList.end(); ++it3 ){
-  Nodes.add((*it3).startNode(),counter++);
-  Nodes.add((*it3).endNode(),counter++);
- }
- QValueList<SCElement>::Iterator it4;
- for ( it4 = SCList.begin(); it4 != SCList.end(); ++it4 ){
-  Nodes.add((*it4).node(),counter++);
  }
  QValueList<CCElement>::Iterator it2;
  for ( it2 = VCCSList.begin(); it2 != VCCSList.end(); ++it2 ){

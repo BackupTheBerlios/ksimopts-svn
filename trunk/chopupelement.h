@@ -20,6 +20,7 @@
 #ifndef CHOPUPELEMENT_H
 #define CHOPUPELEMENT_H
 
+#include <stdlib.h>
 /**
 @author Carsten Nikiel
 */
@@ -34,7 +35,18 @@ public:
     int b(void) { return B_; }
 
     ~ChopUpElement();
-
+  
+  bool operator< ( ChopUpElement &A ) {
+   int min;
+   if (A_ < B_) { min=A_; }
+   else { min=B_; }
+   if (min > A.a()) { min=A.a(); }
+   if (min > A.b()) { min=A.b(); }
+   if ((A_==min)||(B_==min)) {
+    return true;
+   } else return false;
+  }
+      
 private:
   int A_;
   int B_;

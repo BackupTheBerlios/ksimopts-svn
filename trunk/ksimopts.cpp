@@ -39,16 +39,22 @@ ksimopts::ksimopts()
 //    setXMLFile("ksimoptsui.rc");
 
     new QLabel( "Only ascii", this, "KSimOpts" );
-    SParameterList SOrig;
+    SParameterList SOrig, SCalc;
     SOrig.loadFromFile("/home/cnikiel/Projects/testfile/test6.s");
+    FinalCost finalcost(SOrig);
     NetList Schematic;
     Schematic.loadFromFile("/home/cnikiel/Projects/testfile/test6.net");
 
     SMatrix SM(Schematic);
-    for (int i =0; i<1; i++) {
-      SM.fillMatrix(500e6);
-      SM.createFormula();
+    SM.createFormula();
+    
+    QValueList<SParameter>::Iterator it;
+    for ( it = SOrig.List.begin(); it != SOrig.List.end(); ++it ){
+     SM.calculate((*it).frequency());
+     SCalc.List.push_back(SParameter::SParameter(
+           SM.s11(), SM.s12(), SM.s21(), SM.s22(), (*it).frequency()));
     }
+    std::cout << finalcost.calculate(SCalc) << "\n";
 }
 
 ksimopts::~ksimopts()
