@@ -44,6 +44,7 @@ ksimopts::ksimopts()
     FinalCost finalcost(SOrig);
     NetList Schematic;
     Schematic.loadFromFile("/home/cnikiel/Projects/testfile/hbt_20.net");
+    Schematic.saveToXML("/home/cnikiel/Projects/testfile/test.xml");
 
     SMatrix SM(Schematic);
     SM.createFormula();
@@ -54,7 +55,7 @@ ksimopts::ksimopts()
      SCalc.List.push_back(SParameter::SParameter(
            SM.s11(), SM.s12(), SM.s21(), SM.s22(), (*it).frequency()));
     }
-    std::cout << SM.print() << std::endl;
+//     std::cout << SM.print() << std::endl;
     std::cout << finalcost.calculate(SCalc) << "\n";
 }
 

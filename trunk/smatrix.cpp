@@ -370,10 +370,10 @@ SMatrix::calculate(double Frequency){
     default: break;
    }
  }
-  std::cout << "S11: (" << s11().real() << "," << s11().imag() << ")  ";
-  std::cout << "S12: (" << s12().real() << "," << s12().imag() << ")  ";
-  std::cout << "S21: (" << s21().real() << "," << s21().imag() << ")  ";
-  std::cout << "S22: (" << s22().real() << "," << s22().imag() << ")\n";
+//   std::cout << "S11: (" << s11().real() << "," << s11().imag() << ")  ";
+//   std::cout << "S12: (" << s12().real() << "," << s12().imag() << ")  ";
+//   std::cout << "S21: (" << s21().real() << "," << s21().imag() << ")  ";
+//   std::cout << "S22: (" << s22().real() << "," << s22().imag() << ")\n";
 
  return true;
 }

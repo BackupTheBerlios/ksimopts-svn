@@ -29,6 +29,8 @@
 
 #include <qvaluelist.h>
 #include <qstring.h>
+#include <qdom.h>
+#include <qfile.h>
 
 /**
 NetworkList loadable from Spice and XML files.
@@ -43,6 +45,7 @@ public:
 
     void loadFromFile(QString filename);
     void loadFromXML(QString filename);
+    void saveToXML(QString filename);
     QString print(void);
 
     QValueList<RCLElement> RList;
