@@ -42,11 +42,11 @@ ksimopts::ksimopts()
     SParameterList SOrig;
     SOrig.loadFromFile("/home/cnikiel/Projects/testfile/test6.s");
     NetList Schematic;
-    Schematic.loadFromFile("/home/cnikiel/Projects/testfile/test4.net");
+    Schematic.loadFromFile("/home/cnikiel/Projects/testfile/test6.net");
 
     SMatrix SM(Schematic);
     for (int i =0; i<1; i++) {
-      SM.fillMatrix(500000000.0);
+      SM.fillMatrix(500e6);
       SM.createFormula();
     }
 }

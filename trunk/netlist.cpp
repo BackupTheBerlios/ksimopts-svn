@@ -310,13 +310,18 @@ NetList::createNodeList(void) {
   Nodes.add((*it).startNode(),counter++);
   Nodes.add((*it).endNode(),counter++);
  }
+ for ( it = LList.begin(); it != LList.end(); ++it ){
+  Nodes.add((*it).startNode(),counter++);
+  Nodes.add((*it).endNode(),counter++);
+ }
  for ( it = CList.begin(); it != CList.end(); ++it ){
   Nodes.add((*it).startNode(),counter++);
   Nodes.add((*it).endNode(),counter++);
  }
- for ( it = LList.begin(); it != LList.end(); ++it ){
-  Nodes.add((*it).startNode(),counter++);
-  Nodes.add((*it).endNode(),counter++);
+ QValueList<OLElement>::Iterator it3;
+ for ( it3 = OLList.begin(); it3 != OLList.end(); ++it3 ){
+  Nodes.add((*it3).startNode(),counter++);
+  Nodes.add((*it3).endNode(),counter++);
  }
  QValueList<SCElement>::Iterator it4;
  for ( it4 = SCList.begin(); it4 != SCList.end(); ++it4 ){
@@ -352,11 +357,6 @@ NetList::createNodeList(void) {
  Nodes.add(VOut.startNode(),counter++);
  Nodes.add(VOut.endNode(),counter++);
 */
- QValueList<OLElement>::Iterator it3;
- for ( it3 = OLList.begin(); it3 != OLList.end(); ++it3 ){
-  Nodes.add((*it3).startNode(),counter++);
-  Nodes.add((*it3).endNode(),counter++);
- }
 /* QValueList<NodeElement>::Iterator it5;
  for (it5 = Nodes.Nodes.begin(); it5 != Nodes.Nodes.end(); ++it5) {
    std::cout << (*it5).name() << ": " << (*it5).count() << std::endl;

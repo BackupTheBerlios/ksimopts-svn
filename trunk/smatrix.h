@@ -72,10 +72,7 @@ private:
     void addOL(bool change);
     void addINOL(bool change);
     void addSC(void);
-    void addVCCS(std::complex<double> G);
-    void addVCVS(std::complex<double> E);
-    void addCCVS(std::complex<double> H);
-    void addCCCS(std::complex<double> F);
+    void addCS(std::complex<double> G, bool first, bool second);
     void addNode(int count);
 
     ChopUpList ChopUp;

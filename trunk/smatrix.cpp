@@ -70,7 +70,7 @@ SMatrix::setSchematic(NetList &Schematic) {
 
 bool
 SMatrix::fillMatrix(double Frequency) {
-  Pos_=0;
+ Pos_=0;
  double W=Frequency*2*M_PI;
  QValueList<RCLElement>::Iterator it;
  for ( it = Schematic_.RList.begin(); it != Schematic_.RList.end(); ++it ){
@@ -82,33 +82,40 @@ SMatrix::fillMatrix(double Frequency) {
  for ( it = Schematic_.CList.begin(); it != Schematic_.CList.end(); ++it ){
   addZ(std::complex<double>(0.0,1.0/(W*(*it).value())));
  }
+ int X,Y;
+ QValueList<OLElement>::Iterator it3;
+ for ( it3 = Schematic_.OLList.begin(); it3 != Schematic_.OLList.end(); ++it3 ){
+   addOL(true);
+   if ((*it3).startNode()=="S1") { X = Pos_ - 2; }
+   if ((*it3).startNode()=="S2") { Y = Pos_ - 2; }
+ }
+ S11_=MatrixDimension_*X+X;
+ S12_=MatrixDimension_*X+Y;
+ S21_=MatrixDimension_*Y+X;
+ S22_=MatrixDimension_*Y+Y;
  QValueList<SCElement>::Iterator it4;
  for ( it4 = Schematic_.SCList.begin(); it4 != Schematic_.SCList.end(); ++it4 ){
    addSC();
  }
  QValueList<CCElement>::Iterator it2;
  for ( it2 = Schematic_.VCCSList.begin(); it2 != Schematic_.VCCSList.end(); ++it2 ){
-   addVCCS(std::complex<double>(-(*it2).value()*50.0*exp(std::complex<double>(0.0,-W*(*it2).tau()))));
+   addCS(std::complex<double>(2.0*(*it2).value()*exp(std::complex<double>(0.0,-W*(*it2).tau()))), false, false);
   }
  for ( it2 = Schematic_.VCVSList.begin(); it2 != Schematic_.VCVSList.end(); ++it2 ){
-   addVCVS(std::complex<double>((*it2).value()*exp(std::complex<double>(0.0,-W*(*it2).tau()))/2.0));
+   addCS(std::complex<double>((*it2).value()*exp(std::complex<double>(0.0,-W*(*it2).tau()))), true, false);
   }
  for ( it2 = Schematic_.CCCSList.begin(); it2 != Schematic_.CCCSList.end(); ++it2 ){
-   addCCCS(std::complex<double>(-(*it2).value()*exp(std::complex<double>(0.0,-W*(*it2).tau()))));
+   addCS(std::complex<double>(-(*it2).value()*exp(std::complex<double>(0.0,-W*(*it2).tau()))), false, true);
   }
  for ( it2 = Schematic_.CCVSList.begin(); it2 != Schematic_.CCVSList.end(); ++it2 ){
-   addCCVS(std::complex<double>((*it2).value()/50.0*exp(std::complex<double>(0.0,-W*(*it2).tau()))));
+   addCS(std::complex<double>((*it2).value()/2.0*exp(std::complex<double>(0.0,-W*(*it2).tau()))), true, true);
   }
- QValueList<OLElement>::Iterator it3;
- for ( it3 = Schematic_.OLList.begin(); it3 != Schematic_.OLList.end(); ++it3 ){
-   addOL(true);
- }
  QValueList<NodeElement>::Iterator it5;
  for ( it5 = Schematic_.Nodes.Nodes.begin(); it5 != Schematic_.Nodes.Nodes.end(); ++it5 ){
   if ((*it5).Numbers_.count()>2) {
     addNode((*it5).Numbers_.count());
     int tmpCount = Pos_ - (*it5).Numbers_.count() + 1 ;
-    for ( int i = 0; i < (*it5).Numbers_.count(); i++) {
+    for ( unsigned int i = 0; i < (*it5).Numbers_.count(); i++) {
      ChopUp.List.push_back(ChopUpElement(tmpCount, (*it5).Numbers_[i]));
      ChopUp.List.push_back(ChopUpElement((*it5).Numbers_[i], tmpCount));
      tmpCount++;
@@ -178,10 +185,11 @@ SMatrix::addSC(void)
 }
 
 void
-SMatrix::addVCCS(std::complex<double> G){
+SMatrix::addCS(std::complex<double> G, bool first, bool second){
   std::complex<double> *Destination;
-
-  addINOL(false);
+  
+  if (first) { addOL(false); }
+  else { addINOL(false); }
   Destination=SMatrix_+MatrixDimension_*Pos_+Pos_+2;
   *Destination++=G;
   *Destination=-G;
@@ -189,52 +197,9 @@ SMatrix::addVCCS(std::complex<double> G){
   *Destination++=G;
   *Destination=-G;
   Pos_+=2;
-  addINOL(true);
-}
-
-void
-SMatrix::addVCVS(std::complex<double> E){
-  std::complex<double> *Destination;
-
-  addOL(false);
-  Destination=SMatrix_+MatrixDimension_*Pos_+Pos_+2;
-  *Destination++=E;
-  *Destination=-E;
-  Destination += MatrixDimension_ -1;
-  *Destination++=-E;
-  *Destination=E;
-  Pos_+=2;
-  addINOL(true);
-}
-
-void
-SMatrix::addCCVS(std::complex<double> H){
-  std::complex<double> *Destination;
-
-  addOL(false);
-  Destination=SMatrix_+MatrixDimension_*Pos_+Pos_+2;
-  *Destination++=H;
-  *Destination=-H;
-  Destination += MatrixDimension_ -1;
-  *Destination++=H;
-  *Destination=-H;
-  Pos_+=2;
-  addOL(true);
-}
-
-void
-SMatrix::addCCCS(std::complex<double> F){
-  std::complex<double> *Destination;
-
-  addINOL(false);
-  Destination=SMatrix_+MatrixDimension_*Pos_+Pos_+2;
-  *Destination++=F;
-  *Destination=-F;
-  Destination += MatrixDimension_ -1;
-  *Destination++=F;
-  *Destination=-F;
-  Pos_+=2;
-  addOL(true);
+  if (second) { addOL(true); }
+  else { addINOL(true); }
+  
 }
 
 void
@@ -350,46 +315,10 @@ SMatrix::createFormula(void) {
 
 //   std::cout << Formula.print() << std::endl;
 //   std::cout << Formula.List.count() << std::endl;
-//   std::cout << ChopUp.print() << std::endl;
+  std::cout << ChopUp.print() << std::endl;
   FormulaExists_=true;
 
-  Row=Column=0;
-  int X1,X2,Y1,Y2;
-  while (Column<MatrixDimension_) {
-   if(!*(AVector+Column)) {
-    X1=Column++;
-    break;
-   }
-   Column++;
-  }
-  while (Column<MatrixDimension_) {
-   if(*(AVector+Column)==false) {
-    X2=Column++;
-    break;
-   }
-   Column++;
-  }
-  while (Row<MatrixDimension_) {
-   if(*(BVector+Row)==false) {
-    Y1=Row++;
-    break;
-   }
-   Row++;
-  }
-  while (Row<MatrixDimension_) {
-   if(*(BVector+Row)==false) {
-    Y2=Row++;
-    break;
-   }
-   Row++;
-  }
-  S11_=MatrixDimension_*Y1+X1;
-  S12_=MatrixDimension_*Y1+X2;
-  S21_=MatrixDimension_*Y2+X1;
-  S22_=MatrixDimension_*Y2+X2;
-
   std::cout << S11_ << " " << S12_ << " " << S21_ << " " << S22_ << std::endl;
-  std::cout << X1 << " " << X2 << " " << Y1 << " " << Y2 << std::endl;
   std::cout << count0 << " " << count1 << " " << count2 << " " << count3 << std::endl;
 
   std::cout << "S11: (" << s11().real() << "," << s11().imag() << ")\n";
