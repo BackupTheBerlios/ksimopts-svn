@@ -37,6 +37,7 @@ public:
 //     SMatrix();
     SMatrix(NetList &Schematic) :
      Schematic_(Schematic) {
+      SMatrix_=0;
       setSchematic(Schematic);
       Z0_2=std::complex<double>(100.0,0.0);
       FormulaExists_=false;
@@ -72,7 +73,7 @@ private:
     void addOL(bool change);
     void addINOL(bool change);
     void addSC(void);
-    void addCS(std::complex<double> G, bool first, bool second);
+    void addCS(std::complex<double> Z1, std::complex<double> Z2, bool first, bool second);
     void addNode(int count);
 
     ChopUpList ChopUp;

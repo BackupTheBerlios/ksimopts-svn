@@ -30,7 +30,11 @@
 class SParameterList{
 public:
     SParameterList();
-
+    
+    SParameterList(QString filename) {
+     loadFromFile(filename);
+    }
+    
     ~SParameterList();
 
     void loadFromFile(QString filename);

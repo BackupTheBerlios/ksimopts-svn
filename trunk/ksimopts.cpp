@@ -39,11 +39,10 @@ ksimopts::ksimopts()
 //    setXMLFile("ksimoptsui.rc");
 
     new QLabel( "Only ascii", this, "KSimOpts" );
-    SParameterList SOrig, SCalc;
-    SOrig.loadFromFile("/home/cnikiel/Projects/testfile/hbt_20.s");
+    SParameterList SOrig("/home/cnikiel/Projects/testfile/hbt_20.s");
+    SParameterList SCalc;
     FinalCost finalcost(SOrig);
-    NetList Schematic;
-    Schematic.loadFromFile("/home/cnikiel/Projects/testfile/hbt_20.net");
+    NetList Schematic("/home/cnikiel/Projects/testfile/hbt_20.net");
     Schematic.saveToXML("/home/cnikiel/Projects/testfile/test.xml");
 
     SMatrix SM(Schematic);
@@ -55,6 +54,7 @@ ksimopts::ksimopts()
      SCalc.List.push_back(SParameter::SParameter(
            SM.s11(), SM.s12(), SM.s21(), SM.s22(), (*it).frequency()));
     }
+    std::cout << SCalc.print() << std::endl;
 //     std::cout << SM.print() << std::endl;
     std::cout << finalcost.calculate(SCalc) << "\n";
 }

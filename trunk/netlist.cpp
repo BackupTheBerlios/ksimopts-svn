@@ -352,15 +352,88 @@ NetList::createNodeList(void) {
   Nodes.add((*it2).cstartNode(),counter++);
   Nodes.add((*it2).cendNode(),counter++);
  }
-/* Nodes.add(VIn.startNode(),counter++);
- Nodes.add(VIn.endNode(),counter++);
- Nodes.add(VOut.startNode(),counter++);
- Nodes.add(VOut.endNode(),counter++);
-*/
-/* QValueList<NodeElement>::Iterator it5;
- for (it5 = Nodes.Nodes.begin(); it5 != Nodes.Nodes.end(); ++it5) {
-   std::cout << (*it5).name() << ": " << (*it5).count() << std::endl;
- }*/
+}
+
+QDomElement 
+NetList::XMLRCL(QValueList<RCLElement>::Iterator RCL, QString type){
+ QDomDocument doc( "KSimOptS_ML" );
+ QDomElement element;
+ QString tmp;
+ element = doc.createElement( type );
+ QDomElement name = doc.createElement( "Name" );
+ name.appendChild( doc.createTextNode( (*RCL).name() ) );
+ QDomElement value = doc.createElement( "Value");
+ value.setAttribute( "Min", (*RCL).min() );
+ value.setAttribute( "Max", (*RCL).max() );
+ value.appendChild( doc.createTextNode( tmp.sprintf("%e", (*RCL).value() ) ) );
+ QDomElement node1 = doc.createElement( "Node" );
+ node1.setAttribute( "Type", "Start" );
+ node1.appendChild( doc.createTextNode( (*RCL).startNode() ) );
+ QDomElement node2 = doc.createElement( "Node" );
+ node2.setAttribute( "Type", "End" );
+ node2.appendChild( doc.createTextNode( (*RCL).endNode() ) );
+ element.appendChild( name );
+ element.appendChild( value );
+ element.appendChild( node1 );
+ element.appendChild( node2 );
+ return element;
+}
+
+QDomElement 
+NetList::XMLCC(QValueList<CCElement>::Iterator CC, QString type){
+ QDomDocument doc( "KSimOptS_ML" );
+ QDomElement element;
+ QString tmp;
+ element = doc.createElement( type );
+ QDomElement name = doc.createElement( "Name" );
+ name.appendChild( doc.createTextNode( (*CC).name() ) );
+ QDomElement value = doc.createElement( "Value");
+ value.setAttribute( "Min", (*CC).min() );
+ value.setAttribute( "Max", (*CC).max() );
+ value.appendChild( doc.createTextNode( tmp.sprintf("%e", (*CC).value() ) ) );
+ QDomElement tau = doc.createElement( "Tau");
+ tau.setAttribute( "Min", (*CC).taumin() );
+ tau.setAttribute( "Max", (*CC).taumax() );
+ tau.appendChild( doc.createTextNode( tmp.sprintf("%e", (*CC).tau() ) ) );
+ QDomElement node1 = doc.createElement( "Node" );
+ node1.setAttribute( "Type", "Start" );
+ node1.appendChild( doc.createTextNode( (*CC).startNode() ) );
+ QDomElement node2 = doc.createElement( "Node" );
+ node2.setAttribute( "Type", "End" );
+ node2.appendChild( doc.createTextNode( (*CC).endNode() ) );
+ QDomElement node3 = doc.createElement( "Node" );
+ node3.setAttribute( "Type", "CEnd" );
+ node3.appendChild( doc.createTextNode( (*CC).cstartNode() ) );
+ QDomElement node4 = doc.createElement( "Node" );
+ node4.setAttribute( "Type", "CEnd" );
+ node4.appendChild( doc.createTextNode( (*CC).cendNode() ) );
+ element.appendChild( name );
+ element.appendChild( value );
+ element.appendChild( tau );
+ element.appendChild( node1 );
+ element.appendChild( node2 );
+ element.appendChild( node3 );
+ element.appendChild( node4 );
+ return element;
+}
+
+QDomElement 
+NetList::XMLV(VElement V){
+ QDomDocument doc( "KSimOptS_ML" );
+ QDomElement element;
+ element = doc.createElement( "V" );
+ QDomElement name = doc.createElement( "Name" );
+ name.appendChild( doc.createTextNode( V.name() ) );
+ QDomElement node1 = doc.createElement( "Node" );
+ node1.setAttribute( "Type", "Start" );
+ node1.appendChild( doc.createTextNode( V.startNode() ) );
+ QDomElement node2 = doc.createElement( "Node" );
+ node2.setAttribute( "Type", "End" );
+ node2.appendChild( doc.createTextNode( V.endNode() ) );
+ element.appendChild( name );
+ element.appendChild( node1 );
+ element.appendChild( node2 );
+ return element;
 }
 
 void 
@@ -369,242 +442,36 @@ NetList::saveToXML(QString filename) {
  QDomElement root = doc.createElement( "KSimOpts" );
  doc.appendChild( root );
 
- QDomElement schematic = doc.createElement( "Schematic" );
+ QDomElement schematic = doc.createElement( "Components" );
  root.appendChild( schematic );
     
- QString ReturnValue;
- QString tmp;
  QValueList<RCLElement>::Iterator it;
  for ( it = RList.begin(); it != RList.end(); ++it ){
-  QDomElement element = doc.createElement( "Element" );
-  element.setAttribute( "Type", "R" );
-  QDomElement name = doc.createElement( "Name" );
-  name.appendChild( doc.createTextNode( (*it).name() ) );
-  QDomElement value = doc.createElement( "Value");
-  value.setAttribute( "Min", (*it).min() );
-  value.setAttribute( "Max", (*it).max() );
-  value.appendChild( doc.createTextNode( tmp.sprintf("%e", (*it).value() ) ) );
-  QDomElement node1 = doc.createElement( "Node" );
-  node1.setAttribute( "Type", "Start" );
-  node1.appendChild( doc.createTextNode( (*it).startNode() ) );
-  QDomElement node2 = doc.createElement( "Node" );
-  node2.setAttribute( "Type", "End" );
-  node2.appendChild( doc.createTextNode( (*it).endNode() ) );
-  element.appendChild( name );
-  element.appendChild( value );
-  element.appendChild( node1 );
-  element.appendChild( node2 );
-  schematic.appendChild( element );  
+  schematic.appendChild( XMLRCL(it, "Resistance") );  
  }
  for ( it = CList.begin(); it != CList.end(); ++it ){
-  QDomElement element = doc.createElement( "Element" );
-  element.setAttribute( "Type", "C" );
-  QDomElement name = doc.createElement( "Name" );
-  name.appendChild( doc.createTextNode( (*it).name() ) );
-  QDomElement value = doc.createElement( "Value");
-  value.setAttribute( "Min", (*it).min() );
-  value.setAttribute( "Max", (*it).max() );
-  value.appendChild( doc.createTextNode( tmp.sprintf("%e", (*it).value() ) ) );
-  QDomElement node1 = doc.createElement( "Node" );
-  node1.setAttribute( "Type", "Start" );
-  node1.appendChild( doc.createTextNode( (*it).startNode() ) );
-  QDomElement node2 = doc.createElement( "Node" );
-  node2.setAttribute( "Type", "End" );
-  node2.appendChild( doc.createTextNode( (*it).endNode() ) );
-  element.appendChild( name );
-  element.appendChild( value );
-  element.appendChild( node1 );
-  element.appendChild( node2 );
-  schematic.appendChild( element );  
+  schematic.appendChild( XMLRCL(it, "Capacity") );  
  }
  for ( it = LList.begin(); it != LList.end(); ++it ){
-  QDomElement element = doc.createElement( "Element" );
-  element.setAttribute( "Type", "L" );
-  QDomElement name = doc.createElement( "Name" );
-  name.appendChild( doc.createTextNode( (*it).name() ) );
-  QDomElement value = doc.createElement( "Value");
-  value.setAttribute( "Min", (*it).min() );
-  value.setAttribute( "Max", (*it).max() );
-  value.appendChild( doc.createTextNode( tmp.sprintf("%e", (*it).value() ) ) );
-  QDomElement node1 = doc.createElement( "Node" );
-  node1.setAttribute( "Type", "Start" );
-  node1.appendChild( doc.createTextNode( (*it).startNode() ) );
-  QDomElement node2 = doc.createElement( "Node" );
-  node2.setAttribute( "Type", "End" );
-  node2.appendChild( doc.createTextNode( (*it).endNode() ) );
-  element.appendChild( name );
-  element.appendChild( value );
-  element.appendChild( node1 );
-  element.appendChild( node2 );
-  schematic.appendChild( element );  
+  schematic.appendChild( XMLRCL(it, "Inductivity") );  
  }
  QValueList<CCElement>::Iterator it2;
  for ( it2 = VCVSList.begin(); it2 != VCVSList.end(); ++it2 ){
-  QDomElement element = doc.createElement( "Element" );
-  element.setAttribute( "Type", "VCVS" );
-  QDomElement name = doc.createElement( "Name" );
-  name.appendChild( doc.createTextNode( (*it2).name() ) );
-  QDomElement value = doc.createElement( "Value");
-  value.setAttribute( "Min", (*it2).min() );
-  value.setAttribute( "Max", (*it2).max() );
-  value.appendChild( doc.createTextNode( tmp.sprintf("%e", (*it2).value() ) ) );
-  QDomElement tau = doc.createElement( "Tau");
-  tau.setAttribute( "Min", (*it2).taumin() );
-  tau.setAttribute( "Max", (*it2).taumax() );
-  tau.appendChild( doc.createTextNode( tmp.sprintf("%e", (*it2).tau() ) ) );
-  QDomElement node1 = doc.createElement( "Node" );
-  node1.setAttribute( "Type", "Start" );
-  node1.appendChild( doc.createTextNode( (*it2).startNode() ) );
-  QDomElement node2 = doc.createElement( "Node" );
-  node2.setAttribute( "Type", "End" );
-  node2.appendChild( doc.createTextNode( (*it2).endNode() ) );
-  QDomElement node3 = doc.createElement( "Node" );
-  node3.setAttribute( "Type", "CEnd" );
-  node3.appendChild( doc.createTextNode( (*it2).cstartNode() ) );
-  QDomElement node4 = doc.createElement( "Node" );
-  node4.setAttribute( "Type", "CEnd" );
-  node4.appendChild( doc.createTextNode( (*it2).cendNode() ) );
-  element.appendChild( name );
-  element.appendChild( value );
-  element.appendChild( tau );
-  element.appendChild( node1 );
-  element.appendChild( node2 );
-  element.appendChild( node3 );
-  element.appendChild( node4 );
-  schematic.appendChild( element );  
+  schematic.appendChild( XMLCC(it2, "VCVS") );  
   }
  for ( it2 = VCCSList.begin(); it2 != VCCSList.end(); ++it2 ){
-   QDomElement element = doc.createElement( "Element" );
-  element.setAttribute( "Type", "VCCS" );
-  QDomElement name = doc.createElement( "Name" );
-  name.appendChild( doc.createTextNode( (*it2).name() ) );
-  QDomElement value = doc.createElement( "Value");
-  value.setAttribute( "Min", (*it2).min() );
-  value.setAttribute( "Max", (*it2).max() );
-  value.appendChild( doc.createTextNode( tmp.sprintf("%e", (*it2).value() ) ) );
-  QDomElement tau = doc.createElement( "Tau");
-  tau.setAttribute( "Min", (*it2).taumin() );
-  tau.setAttribute( "Max", (*it2).taumax() );
-  tau.appendChild( doc.createTextNode( tmp.sprintf("%e", (*it2).tau() ) ) );
-  QDomElement node1 = doc.createElement( "Node" );
-  node1.setAttribute( "Type", "Start" );
-  node1.appendChild( doc.createTextNode( (*it2).startNode() ) );
-  QDomElement node2 = doc.createElement( "Node" );
-  node2.setAttribute( "Type", "End" );
-  node2.appendChild( doc.createTextNode( (*it2).endNode() ) );
-  QDomElement node3 = doc.createElement( "Node" );
-  node3.setAttribute( "Type", "CEnd" );
-  node3.appendChild( doc.createTextNode( (*it2).cstartNode() ) );
-  QDomElement node4 = doc.createElement( "Node" );
-  node4.setAttribute( "Type", "CEnd" );
-  node4.appendChild( doc.createTextNode( (*it2).cendNode() ) );
-  element.appendChild( name );
-  element.appendChild( value );
-  element.appendChild( tau );
-  element.appendChild( node1 );
-  element.appendChild( node2 );
-  element.appendChild( node3 );
-  element.appendChild( node4 );
-  schematic.appendChild( element );  
+  schematic.appendChild( XMLCC(it2, "VCCS") );  
  }
  for ( it2 = CCVSList.begin(); it2 != CCVSList.end(); ++it2 ){
-  QDomElement element = doc.createElement( "Element" );
-  element.setAttribute( "Type", "CCVS" );
-  QDomElement name = doc.createElement( "Name" );
-  name.appendChild( doc.createTextNode( (*it2).name() ) );
-  QDomElement value = doc.createElement( "Value");
-  value.setAttribute( "Min", (*it2).min() );
-  value.setAttribute( "Max", (*it2).max() );
-  value.appendChild( doc.createTextNode( tmp.sprintf("%e", (*it2).value() ) ) );
-  QDomElement tau = doc.createElement( "Tau");
-  tau.setAttribute( "Min", (*it2).taumin() );
-  tau.setAttribute( "Max", (*it2).taumax() );
-  tau.appendChild( doc.createTextNode( tmp.sprintf("%e", (*it2).tau() ) ) );
-  QDomElement node1 = doc.createElement( "Node" );
-  node1.setAttribute( "Type", "Start" );
-  node1.appendChild( doc.createTextNode( (*it2).startNode() ) );
-  QDomElement node2 = doc.createElement( "Node" );
-  node2.setAttribute( "Type", "End" );
-  node2.appendChild( doc.createTextNode( (*it2).endNode() ) );
-  QDomElement node3 = doc.createElement( "Node" );
-  node3.setAttribute( "Type", "CEnd" );
-  node3.appendChild( doc.createTextNode( (*it2).cstartNode() ) );
-  QDomElement node4 = doc.createElement( "Node" );
-  node4.setAttribute( "Type", "CEnd" );
-  node4.appendChild( doc.createTextNode( (*it2).cendNode() ) );
-  element.appendChild( name );
-  element.appendChild( value );
-  element.appendChild( tau );
-  element.appendChild( node1 );
-  element.appendChild( node2 );
-  element.appendChild( node3 );
-  element.appendChild( node4 );
-  schematic.appendChild( element );  
-  }
+  schematic.appendChild( XMLCC(it2, "CCVS") );  
+ }
  for ( it2 = CCCSList.begin(); it2 != CCCSList.end(); ++it2 ){
-  QDomElement element = doc.createElement( "Element" );
-  element.setAttribute( "Type", "CCCS" );
-  QDomElement name = doc.createElement( "Name" );
-  name.appendChild( doc.createTextNode( (*it2).name() ) );
-  QDomElement value = doc.createElement( "Value");
-  value.setAttribute( "Min", (*it2).min() );
-  value.setAttribute( "Max", (*it2).max() );
-  value.appendChild( doc.createTextNode( tmp.sprintf("%e", (*it2).value() ) ) );
-  QDomElement tau = doc.createElement( "Tau");
-  tau.setAttribute( "Min", (*it2).taumin() );
-  tau.setAttribute( "Max", (*it2).taumax() );
-  tau.appendChild( doc.createTextNode( tmp.sprintf("%e", (*it2).tau() ) ) );
-  QDomElement node1 = doc.createElement( "Node" );
-  node1.setAttribute( "Type", "Start" );
-  node1.appendChild( doc.createTextNode( (*it2).startNode() ) );
-  QDomElement node2 = doc.createElement( "Node" );
-  node2.setAttribute( "Type", "End" );
-  node2.appendChild( doc.createTextNode( (*it2).endNode() ) );
-  QDomElement node3 = doc.createElement( "Node" );
-  node3.setAttribute( "Type", "CEnd" );
-  node3.appendChild( doc.createTextNode( (*it2).cstartNode() ) );
-  QDomElement node4 = doc.createElement( "Node" );
-  node4.setAttribute( "Type", "CEnd" );
-  node4.appendChild( doc.createTextNode( (*it2).cendNode() ) );
-  element.appendChild( name );
-  element.appendChild( value );
-  element.appendChild( tau );
-  element.appendChild( node1 );
-  element.appendChild( node2 );
-  element.appendChild( node3 );
-  element.appendChild( node4 );
-  schematic.appendChild( element );  
-  }
+  schematic.appendChild( XMLCC(it2, "CCCS") );  
+ }
   
- QDomElement element = doc.createElement( "Element" );
- element.setAttribute( "Type", "V" );
- QDomElement name = doc.createElement( "Name" );
- name.appendChild( doc.createTextNode( "VIn" ) );
- QDomElement node1 = doc.createElement( "Node" );
- node1.setAttribute( "Type", "Start" );
- node1.appendChild( doc.createTextNode( VIn.startNode() ) );
- QDomElement node2 = doc.createElement( "Node" );
- node2.setAttribute( "Type", "End" );
- node2.appendChild( doc.createTextNode( VIn.endNode() ) );
- element.appendChild( name );
- element.appendChild( node1 );
- element.appendChild( node2 );
- schematic.appendChild( element );  
+ schematic.appendChild( XMLV(VIn) );  
  
- element = doc.createElement( "Element" );
- element.setAttribute( "Type", "V" );
- name = doc.createElement( "Name" );
- name.appendChild( doc.createTextNode( "VOut" ) );
- node1 = doc.createElement( "Node" );
- node1.setAttribute( "Type", "Start" );
- node1.appendChild( doc.createTextNode( VOut.startNode() ) );
- node2 = doc.createElement( "Node" );
- node2.setAttribute( "Type", "End" );
- node2.appendChild( doc.createTextNode( VOut.endNode() ) );
- element.appendChild( name );
- element.appendChild( node1 );
- element.appendChild( node2 );
- schematic.appendChild( element );  
+ schematic.appendChild( XMLV(VOut) );  
  
  QFile file( filename );
  if ( file.open(IO_WriteOnly) ) {

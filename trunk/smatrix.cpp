@@ -68,9 +68,11 @@ SMatrix::setSchematic(NetList &Schematic) {
  for (it = Schematic_.Nodes.Nodes.begin(); it != Schematic_.Nodes.Nodes.end(); ++it) {
    if ((*it).count()>2) {MatrixDimension_ += (*it).count();}
  }
+ if (SMatrix_!=0) { free(SMatrix_); }
  SMatrix_=(std::complex<double> *) calloc(MatrixDimension_*MatrixDimension_,
            sizeof(std::complex<double>));
  Pos_=0;
+ FormulaExists_=false;
 }
 
 bool
@@ -105,16 +107,20 @@ SMatrix::fillMatrix(double Frequency) {
  }
  QValueList<CCElement>::Iterator it2;
  for ( it2 = Schematic_.VCCSList.begin(); it2 != Schematic_.VCCSList.end(); ++it2 ){
-   addCS(std::complex<double>(-2.0*(*it2).value()*exp(std::complex<double>(0.0,-W*(*it2).tau()))), false, false);
+   addCS(std::polar(2.0*(*it2).value(),(M_PI-W*(*it2).tau())),
+         std::polar(2.0*(*it2).value(),(-W*(*it2).tau())), false, false);
   }
  for ( it2 = Schematic_.VCVSList.begin(); it2 != Schematic_.VCVSList.end(); ++it2 ){
-   addCS(std::complex<double>((*it2).value()*exp(std::complex<double>(0.0,-W*(*it2).tau()))), true, false);
+   addCS(std::polar((*it2).value(),(M_PI-W*(*it2).tau())),
+         std::polar((*it2).value(),(-W*(*it2).tau())), true, false);
   }
  for ( it2 = Schematic_.CCCSList.begin(); it2 != Schematic_.CCCSList.end(); ++it2 ){
-   addCS(std::complex<double>(-(*it2).value()*exp(std::complex<double>(0.0,-W*(*it2).tau()))), false, true);
+   addCS(std::polar(-(*it2).value(),(M_PI-W*(*it2).tau())), 
+         std::polar(-(*it2).value(),(-W*(*it2).tau())), false, true);
   }
  for ( it2 = Schematic_.CCVSList.begin(); it2 != Schematic_.CCVSList.end(); ++it2 ){
-   addCS(std::complex<double>((*it2).value()/2.0*exp(std::complex<double>(0.0,-W*(*it2).tau()))), true, true);
+   addCS(std::polar((*it2).value()/2.0,(M_PI-W*(*it2).tau())),
+         std::polar((*it2).value()/2.0,(-W*(*it2).tau())), true, true);
   }
  QValueList<NodeElement>::Iterator it5;
  for ( it5 = Schematic_.Nodes.Nodes.begin(); it5 != Schematic_.Nodes.Nodes.end(); ++it5 ){
@@ -192,17 +198,17 @@ SMatrix::addSC(void)
 }
 
 void
-SMatrix::addCS(std::complex<double> G, bool first, bool second){
+SMatrix::addCS(std::complex<double> Z1, std::complex<double> Z2, bool first, bool second){
   std::complex<double> *Destination;
 
   if (first) { addOL(false); }
   else { addINOL(false); }
   Destination=SMatrix_+MatrixDimension_*Pos_+Pos_+2;
-  *Destination++=G;
-  *Destination=-G;
+  *Destination++=Z1;
+  *Destination=Z2;
   Destination += MatrixDimension_ -1;
-  *Destination++=G;
-  *Destination=-G;
+  *Destination++=Z1;
+  *Destination=Z2;
   Pos_+=2;
   if (second) { addOL(true); }
   else { addINOL(true); }

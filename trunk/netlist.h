@@ -40,6 +40,10 @@ NetworkList loadable from Spice and XML files.
 class NetList{
 public:
     NetList();
+    
+    NetList(QString filename) {
+      loadFromFile(filename);
+    }
 
     ~NetList();
 
@@ -67,6 +71,9 @@ private:
     void createNodeList();
     QString printRCL(QValueList<RCLElement>::Iterator RCL);
     QString printCC(QValueList<CCElement>::Iterator CC);
+    QDomElement XMLRCL(QValueList<RCLElement>::Iterator RCL, QString type);
+    QDomElement XMLCC(QValueList<CCElement>::Iterator CC, QString type);
+    QDomElement XMLV(VElement V);
 };
 
 #endif
