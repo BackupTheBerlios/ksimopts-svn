@@ -1,0 +1,47 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE KDevPrjSession>
+<KDevPrjSession>
+ <DocsAndViews NumberOfDocuments="9" >
+  <Doc0 NumberOfViews="1" URL="file:///home/cnikiel/Projects/ksimopts/src/ksimopts.cpp" >
+   <View0 line="85" Type="Source" />
+  </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///home/cnikiel/Projects/ksimopts/src/smatrix.cpp" >
+   <View0 line="248" Type="Source" />
+  </Doc1>
+  <Doc2 NumberOfViews="1" URL="file:///home/cnikiel/Projects/ksimopts/src/main.cpp" >
+   <View0 line="0" Type="Source" />
+  </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:///home/cnikiel/Projects/ksimopts/src/formulalist.cpp" >
+   <View0 line="0" Type="Source" />
+  </Doc3>
+  <Doc4 NumberOfViews="1" URL="file:///home/cnikiel/Projects/ksimopts/src/chopuplist.cpp" >
+   <View0 line="0" Type="Source" />
+  </Doc4>
+  <Doc5 NumberOfViews="1" URL="file:///home/cnikiel/Projects/ksimopts/src/sparameter.cpp" >
+   <View0 line="0" Type="Source" />
+  </Doc5>
+  <Doc6 NumberOfViews="1" URL="file:///home/cnikiel/Projects/ksimopts/src/sparameterlist.cpp" >
+   <View0 line="0" Type="Source" />
+  </Doc6>
+  <Doc7 NumberOfViews="1" URL="file:///home/cnikiel/Projects/ksimopts/src/finalcost.cpp" >
+   <View0 line="0" Type="Source" />
+  </Doc7>
+  <Doc8 NumberOfViews="1" URL="file:///home/cnikiel/Projects/ksimopts/src/ksimoptsview.cpp" >
+   <View0 line="0" Type="Source" />
+  </Doc8>
+ </DocsAndViews>
+ <pluginList>
+  <kdevdebugger>
+   <breakpointList/>
+  </kdevdebugger>
+  <kdevbookmarks>
+   <bookmarks/>
+  </kdevbookmarks>
+  <kdevvalgrind>
+   <executable path="" params="" />
+   <valgrind path="" params="" />
+   <calltree path="callgrind" params="" />
+   <kcachegrind path="/usr/kde/3.5/bin/kcachegrind" />
+  </kdevvalgrind>
+ </pluginList>
+</KDevPrjSession>
