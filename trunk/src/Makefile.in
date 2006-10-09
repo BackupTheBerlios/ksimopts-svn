@@ -775,18 +775,18 @@ ksimoptsiface_skel.cpp: ksimoptsiface.kidl
 	$(DCOPIDL2CPP) --c++-suffix cpp --no-signals --no-stub ksimoptsiface.kidl
 
 #>+ 3
-ksimoptsview.moc: $(srcdir)/ksimoptsview.h
-	$(MOC) $(srcdir)/ksimoptsview.h -o ksimoptsview.moc
-
-#>+ 2
-mocs: ksimoptsview.moc
-
-#>+ 3
 ksimopts.moc: $(srcdir)/ksimopts.h
 	$(MOC) $(srcdir)/ksimopts.h -o ksimopts.moc
 
 #>+ 2
 mocs: ksimopts.moc
+
+#>+ 3
+ksimoptsview.moc: $(srcdir)/ksimoptsview.h
+	$(MOC) $(srcdir)/ksimoptsview.h -o ksimoptsview.moc
+
+#>+ 2
+mocs: ksimoptsview.moc
 
 #>+ 3
 pref.moc: $(srcdir)/pref.h
@@ -797,10 +797,10 @@ mocs: pref.moc
 
 #>+ 3
 clean-metasources:
-	-rm -f  ksimoptsview.moc ksimopts.moc pref.moc
+	-rm -f  ksimopts.moc ksimoptsview.moc pref.moc
 
 #>+ 2
-KDE_DIST=ksimopts.lsm ksimopts.desktop ksimoptsui.rc ccelement_interface.h Makefile.in hi16-app-ksimopts.png ksimoptsiface.h Makefile.am hi32-app-ksimopts.png 
+KDE_DIST=hi16-app-ksimopts.png ksimopts.lsm ccelement_interface.h Makefile.in hi32-app-ksimopts.png ksimopts.desktop ksimoptsui.rc Makefile.am ksimoptsiface.h 
 
 #>+ 4
 clean-idl:
@@ -860,7 +860,7 @@ bcheck-am:
 
 
 #>+ 11
-ksimopts.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/main.cpp $(srcdir)/ksimopts.cpp $(srcdir)/ksimoptsview.cpp $(srcdir)/pref.cpp $(srcdir)/sparameter.cpp $(srcdir)/sparameterlist.cpp $(srcdir)/netlist.cpp $(srcdir)/finalcost.cpp $(srcdir)/smatrix.cpp $(srcdir)/rclelement.cpp $(srcdir)/ccelement.cpp $(srcdir)/velement.cpp $(srcdir)/scelement.cpp $(srcdir)/olelement.cpp $(srcdir)/nodelist.cpp $(srcdir)/nodeelement.cpp $(srcdir)/chopuplist.cpp $(srcdir)/chopupelement.cpp $(srcdir)/formulalist.cpp $(srcdir)/formulaelement.cpp ksimoptsiface_skel.cpp  ksimoptsview.moc ksimopts.moc pref.moc
+ksimopts.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/main.cpp $(srcdir)/ksimopts.cpp $(srcdir)/ksimoptsview.cpp $(srcdir)/pref.cpp $(srcdir)/sparameter.cpp $(srcdir)/sparameterlist.cpp $(srcdir)/netlist.cpp $(srcdir)/finalcost.cpp $(srcdir)/smatrix.cpp $(srcdir)/rclelement.cpp $(srcdir)/ccelement.cpp $(srcdir)/velement.cpp $(srcdir)/scelement.cpp $(srcdir)/olelement.cpp $(srcdir)/nodelist.cpp $(srcdir)/nodeelement.cpp $(srcdir)/chopuplist.cpp $(srcdir)/chopupelement.cpp $(srcdir)/formulalist.cpp $(srcdir)/formulaelement.cpp ksimoptsiface_skel.cpp  ksimopts.moc ksimoptsview.moc pref.moc
 	@echo 'creating ksimopts.all_cpp.cpp ...'; \
 	rm -f ksimopts.all_cpp.files ksimopts.all_cpp.final; \
 	echo "#define KDE_USE_FINAL 1" >> ksimopts.all_cpp.final; \
@@ -899,8 +899,8 @@ kde-rpo-clean:
 nmcheck: 
 nmcheck-am: nmcheck
 pref.lo: pref.moc 
-ksimopts.o: ksimopts.moc 
-ksimopts.lo: ksimopts.moc 
 ksimoptsview.lo: ksimoptsview.moc 
+ksimopts.lo: ksimopts.moc 
 ksimoptsview.o: ksimoptsview.moc 
 pref.o: pref.moc 
+ksimopts.o: ksimopts.moc 
